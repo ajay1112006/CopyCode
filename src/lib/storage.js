@@ -26,17 +26,20 @@ export async function saveRooms(rooms) {
 
 export const DataService = {
   async createRoom({ name, password }) {
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.NETLIFY;
+
     try {
       await dbConnect();
       if (!global.mongoose.isMock) {
         return await Room.create({ name, password, pages: [{ title: 'Main', content: '' }] });
       }
+      if (isProduction) throw new Error('Database connection is in mock mode but production requires a real DB.');
     } catch (err) {
-      if (process.env.NODE_ENV === 'production') throw err;
+      if (isProduction) throw err;
       console.log('Using JSON fallback for creation');
     }
 
-    // JSON Fallback
+    // JSON Fallback (Only for local dev)
     const rooms = await getRooms();
     if (rooms.find(r => r.name === name.toLowerCase())) {
       throw new Error('Room name already exists');
@@ -60,13 +63,16 @@ export const DataService = {
   },
 
   async findRoomByName(name) {
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.NETLIFY;
+
     try {
       await dbConnect();
       if (!global.mongoose.isMock) {
         return await Room.findOne({ name: name.toLowerCase() });
       }
+      if (isProduction) throw new Error('Database connection is in mock mode but production requires a real DB.');
     } catch (err) {
-      if (process.env.NODE_ENV === 'production') throw err;
+      if (isProduction) throw err;
       console.log('Using JSON fallback for lookup');
     }
 
@@ -74,20 +80,15 @@ export const DataService = {
     let room = rooms.find(r => r.name === name.toLowerCase());
     if (!room) return null;
 
-    // Data Migration: If the room has an old 'content' field but no 'pages'
     if (room.content !== undefined && !room.pages) {
-      console.log(`Migrating room ${room.name} to multi-page schema`);
       room.pages = [{ title: 'Main', content: room.content }];
       delete room.content;
-      // Note: We don't necessarily need to save back here, it will be saved on the next update
     }
 
-    // Ensure pages is always an array
     if (!room.pages) {
       room.pages = [{ title: 'Main', content: '' }];
     }
 
-    // Add helper method to match Mongoose
     return {
       ...room,
       comparePassword: async (candidate) => await bcrypt.compare(candidate, room.password)
@@ -95,6 +96,8 @@ export const DataService = {
   },
 
   async updateRoomPages(name, pages) {
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.NETLIFY;
+
     try {
       await dbConnect();
       if (!global.mongoose.isMock) {
@@ -104,8 +107,9 @@ export const DataService = {
           { new: true }
         );
       }
+      if (isProduction) throw new Error('Database connection is in mock mode but production requires a real DB.');
     } catch (err) {
-      if (process.env.NODE_ENV === 'production') throw err;
+      if (isProduction) throw err;
       console.log('Using JSON fallback for update');
     }
 
