@@ -32,7 +32,7 @@ async function dbConnect() {
         return mongoose;
       })
       .catch((err) => {
-        console.error('MongoDB connection failed. Switching to JSON fallback mode.');
+        console.error('MongoDB connection failed:', err.message);
         cached.isMock = true;
         // Return a dummy object that mimics a connection
         return { connection: { isMock: true } };
