@@ -1,0 +1,20 @@
+[
+  {
+    "_id": "1778060644104",
+    "name": "ajay",
+    "password": "$2b$10$wRAcckTrUZizP.jkJoPVreDAOir8MYT1PhSGEJ/O9cUDq3OrJj/9u",
+    "content": "1.\n/ @Component — class-level, auto-detected via @ComponentScan\n@Component\npublic class EmailService {\n    public String send(String to) {\n        return \"Email sent to \" + to;\n    }\n}\n\n// @Bean — method-level, inside a @Configuration class\n@Configuration\npublic class AppConfig {\n    @Bean\n    public PasswordEncoder passwordEncoder() {\n        return new BCryptPasswordEncoder();\n    }\n}\n/ Usage via @Autowired\n@Service\npublic class UserService {\n    @Autowired private EmailService emailService;      // @Component\n    @Autowired private PasswordEncoder passwordEncoder; // @Bean\n\n    public void register(String email, String password) {\n        String hash = passwordEncoder.encode(password);\n        System.out.println(\"Hash: \" + hash);\n        System.out.println(emailService.send(email));\n    }\n}\n\n\n2.\n// Field Injection (not recommended — hides dependencies)\n@Service\npublic class OrderService {\n    @Autowired\n    private PaymentService paymentService; // hidden dep\n}\n\n// Constructor Injection (recommended — immutable, testable)\n@Service\npublic class OrderService {\n    private final PaymentService paymentService;\n\n    public OrderService(PaymentService paymentService) {\n        this.paymentService = paymentService;\n    }\npublic String placeOrder(double amount) {\n        return paymentService.charge(amount);\n    }\n}\n\n// Test without Spring context (impossible with field injection)\n@Test\nvoid testOrder() {\n    PaymentService mock = new MockPaymentService();\n    OrderService svc = new OrderService(mock);  // ✅ easy\n    assertEquals(\"charged 99.0\", svc.placeOrder(99.0));\n}\n\n3.\n",
+    "createdAt": "2026-05-06T09:44:04.104Z",
+    "lastModified": "2026-05-06T09:56:13.814Z",
+    "pages": [
+      {
+        "title": "Main",
+        "content": "1.@Component vs @Bean ,autowired\n\n/ @Component — class-level, auto-detected via @ComponentScan\n@Component\npublic class EmailService {\n    public String send(String to) {\n        return \"Email sent to \" + to;\n    }\n}\n\n// @Bean — method-level, inside a @Configuration class\n@Configuration\npublic class AppConfig {\n    @Bean\n    public PasswordEncoder passwordEncoder() {\n        return new BCryptPasswordEncoder();\n    }\n}\n/ Usage via @Autowired\n@Service\npublic class UserService {\n    @Autowired private EmailService emailService;      // @Component\n    @Autowired private PasswordEncoder passwordEncoder; // @Bean\n\n    public void register(String email, String password) {\n        String hash = passwordEncoder.encode(password);\n        System.out.println(\"Hash: \" + hash);\n        System.out.println(emailService.send(email));\n    }\n}\n\n"
+      },
+      {
+        "title": "2",
+        "content": "2.Constructor Injection vs Field Injection\n\n// Field Injection (not recommended — hides dependencies)\n@Service\npublic class OrderService {\n    @Autowired\n    private PaymentService paymentService; // hidden dep\n}\n\n// Constructor Injection (recommended — immutable, testable)\n@Service\npublic class OrderService {\n    private final PaymentService paymentService;\n\n    public OrderService(PaymentService paymentService) {\n        this.paymentService = paymentService;\n    }\npublic String placeOrder(double amount) {\n        return paymentService.charge(amount);\n    }\n}\n\n// Test without Spring context (impossible with field injection)\n@Test\nvoid testOrder() {\n    PaymentService mock = new MockPaymentService();\n    OrderService svc = new OrderService(mock);  // ✅ easy\n    assertEquals(\"charged 99.0\", svc.placeOrder(99.0));\n}\noutput\nTest passed: OrderService.placeOrder(99.0)\n  → \"charged 99.0\"\n"
+      }
+    ]
+  }
+]
