@@ -33,6 +33,7 @@ async function dbConnect() {
       })
       .catch((err) => {
         console.error('MongoDB connection failed:', err.message);
+        global.mongoose.lastError = err.message;
         cached.isMock = true;
         // Return a dummy object that mimics a connection
         return { connection: { isMock: true } };

@@ -33,7 +33,10 @@ export const DataService = {
       if (!global.mongoose.isMock) {
         return await Room.create({ name, password, pages: [{ title: 'Main', content: '' }] });
       }
-      if (isProduction) throw new Error('Database connection is in mock mode but production requires a real DB.');
+      if (isProduction) {
+        const dbError = global.mongoose.lastError || 'Unknown connection error';
+        throw new Error(`Database connection failed: ${dbError}`);
+      }
     } catch (err) {
       if (isProduction) throw err;
       console.log('Using JSON fallback for creation');
@@ -70,7 +73,10 @@ export const DataService = {
       if (!global.mongoose.isMock) {
         return await Room.findOne({ name: name.toLowerCase() });
       }
-      if (isProduction) throw new Error('Database connection is in mock mode but production requires a real DB.');
+      if (isProduction) {
+        const dbError = global.mongoose.lastError || 'Unknown connection error';
+        throw new Error(`Database connection failed: ${dbError}`);
+      }
     } catch (err) {
       if (isProduction) throw err;
       console.log('Using JSON fallback for lookup');
@@ -107,7 +113,10 @@ export const DataService = {
           { new: true }
         );
       }
-      if (isProduction) throw new Error('Database connection is in mock mode but production requires a real DB.');
+      if (isProduction) {
+        const dbError = global.mongoose.lastError || 'Unknown connection error';
+        throw new Error(`Database connection failed: ${dbError}`);
+      }
     } catch (err) {
       if (isProduction) throw err;
       console.log('Using JSON fallback for update');
