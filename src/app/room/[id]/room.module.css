@@ -226,6 +226,18 @@
   color: var(--danger);
 }
 
+.tabInput {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--primary);
+  color: #ededed;
+  font-size: 0.9rem;
+  padding: 0;
+  width: 100px;
+  outline: none;
+  font-family: inherit;
+}
+
 @media (max-width: 768px) {
   .headerActions span {
     display: none;

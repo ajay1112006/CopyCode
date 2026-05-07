@@ -30,6 +30,9 @@ export default function RoomPage() {
   const [lastSaved, setLastSaved] = useState(null);
   const [copied, setCopied] = useState(false);
 
+  const [editingPageIndex, setEditingPageIndex] = useState(null);
+  const [editingTitle, setEditingTitle] = useState('');
+
   // Fetch content on mount
   useEffect(() => {
     const fetchRoom = async () => {
@@ -94,13 +97,26 @@ export default function RoomPage() {
     setPages(newPages);
   };
 
+  const startRenaming = (index, title) => {
+    setEditingPageIndex(index);
+    setEditingTitle(title);
+  };
+
+  const submitRename = () => {
+    if (editingTitle && editingTitle.trim()) {
+      const newPages = [...pages];
+      newPages[editingPageIndex].title = editingTitle.trim();
+      setPages(newPages);
+    }
+    setEditingPageIndex(null);
+  };
+
   const addNewPage = () => {
-    const title = prompt('Enter page title:');
-    if (!title) return;
-    
-    const newPages = [...pages, { title, content: '' }];
+    const newPages = [...pages, { title: 'New Page', content: '' }];
     setPages(newPages);
     setActivePageIndex(newPages.length - 1);
+    setEditingPageIndex(newPages.length - 1);
+    setEditingTitle('New Page');
   };
 
   const deletePage = (index, e) => {
@@ -192,10 +208,23 @@ export default function RoomPage() {
             key={index}
             className={`${styles.tab} ${activePageIndex === index ? styles.activeTab : ''}`}
             onClick={() => setActivePageIndex(index)}
+            onDoubleClick={() => startRenaming(index, page.title)}
           >
             <FileText size={14} />
-            {page.title}
-            {pages.length > 1 && (
+            {editingPageIndex === index ? (
+              <input 
+                autoFocus
+                className={styles.tabInput}
+                value={editingTitle}
+                onChange={(e) => setEditingTitle(e.target.value)}
+                onBlur={submitRename}
+                onKeyDown={(e) => e.key === 'Enter' && submitRename()}
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <span>{page.title}</span>
+            )}
+            {pages.length > 1 && editingPageIndex !== index && (
               <button 
                 className={styles.deletePageBtn}
                 onClick={(e) => deletePage(index, e)}
