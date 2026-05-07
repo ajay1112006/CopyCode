@@ -60,12 +60,7 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <div className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <Copy size={24} color="#3b82f6" />
-          </div>
-          <span className={styles.logoText}>CopyCode</span>
-        </div>
+        {/* Header icon removed as requested */}
       </header>
 
       <main className={styles.main}>
@@ -74,8 +69,20 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           className={styles.hero}
         >
-          <h1 className={styles.title}>
-            Share code & text <span className={styles.gradientText}>instantly.</span>
+          <h1 className={styles.title} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+            <img 
+              src="/icon.png" 
+              alt="" 
+              width={80} 
+              height={80} 
+              style={{ objectFit: 'contain' }}
+            />
+            <img 
+              src="/logo-title.png" 
+              alt="CopyCode - Share code & text instantly" 
+              className={styles.titleLogo}
+              style={{ maxHeight: '80px' }}
+            />
           </h1>
           <p className={styles.subtitle}>
             Secure, password-protected rooms for seamless data transfer across all your devices.

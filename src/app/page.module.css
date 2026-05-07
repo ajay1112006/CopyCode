@@ -22,8 +22,6 @@
 .logoIcon {
   width: 40px;
   height: 40px;
-  background: rgba(59, 130, 246, 0.1);
-  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -56,6 +54,12 @@
   line-height: 1.1;
   margin-bottom: 1.5rem;
   letter-spacing: -1px;
+}
+
+.titleLogo {
+  max-width: 100%;
+  height: auto;
+  max-height: 120px;
 }
 
 .gradientText {
